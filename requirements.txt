@@ -1,0 +1,5 @@
+PyGithub
+pySmartDL
+PyYAML
+requests
+
