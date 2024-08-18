@@ -58,21 +58,10 @@ jobs:
       - name: Build poetry project
         run: |
           poetry build
-      - name: Upload whl artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/*.whl
-          asset_name: gh_rpm-${{ steps.version.outputs.version }}-py3-none-any.whl
-          asset_content_type: application/zip
-      - name: Upload tgz artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/*.tar.gz
-          asset_name: gh_rpm-${{ steps.version.outputs.version }}.tar.gz
-          asset_content_type: application/gzip
+          files: |
+            dist/*.tar.gz
+            dist/*.whl
