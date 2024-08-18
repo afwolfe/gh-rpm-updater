@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "gh_rpm"
+version = "0.1.0"
+description = "A Python script to update RPM packages from GitHub that do not have a corresponding RPM repo."
+authors = ["afwolfe"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+PyGithub = "^2.3.0"
+PyYAML = "^6.0.2"
+
+[tool.poetry.scripts]
+gh-rpm = "gh_rpm.__main__:main"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.8.0"
+mypy = "^1.11.1"
+pre-commit = "^3.8.0"
+types-pyyaml = "^6.0.12.20240808"
+types-requests = "^2.32.0.20240712"
+
+[tool.mypy]
+packages = "gh_rpm"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
