@@ -4,7 +4,7 @@ A Python script to update RPM packages from GitHub that do not have a correspond
 
 ## Usage
 
-Create a config file at `${XDG_CONFIG_HOME}/.config/gh-rpm/config.yml` with the following structure:
+Create a config file at `${XDG_CONFIG_HOME}/gh-rpm/config.yml` with the following structure:
 
 ```yaml
 repositories:
@@ -15,9 +15,25 @@ repositories:
 github_token: # Am optional GitHub personal access token with read permissions for the repo(s) specified above. It can also be set via the "GITHUB_TOKEN" environment variable.
 ```
 
-Install Python dependencies and run, optionally passing in a GitHub token from the environment:
+## Installation
+
+### Pipx
+
+Using [pipx](https://github.com/pypa/pipx) you can quickly install the CLI and run it:
 
 ```shell
+pipx install git+https://github.com/afwolfe/gh-rpm-updater.git
+export GITHUB_TOKEN="..."
+gh-rpm
+```
+
+### From source
+
+Install Python dependencies and run via Poetry, optionally passing in a GitHub token from the environment:
+
+```shell
+git clone https://github.com/afwolfe/gh-rpm-updater.git
+cd gh-rpm-updater
 poetry install
 export GITHUB_TOKEN="..."
 poetry run gh-rpm
