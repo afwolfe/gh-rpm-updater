@@ -7,7 +7,7 @@ on:
 
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -64,6 +64,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./dist/*.whl
+          asset_name: gh_rpm-${{ steps.version.outputs.version }}-py3-none-any.whl
       - name: Upload tgz artifact
         uses: actions/upload-release-asset@v1
         env:
@@ -71,3 +72,4 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./dist/*.tar.gz
+          asset_name: gh_rpm-${{ steps.version.outputs.version }}.tar.gz
