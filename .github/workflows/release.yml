@@ -43,13 +43,14 @@ jobs:
           echo $TAG
           if [[ "$TAG" != "v${{ steps.version.outputs.version }}" ]]; then exit 1; fi
       - name: release
-        uses: actions/create-release@v1
+        uses: ncipollo/release-action@v1
         id: create_release
         with:
           draft: false
           prerelease: false
-          release_name: ${{ steps.version.outputs.version }}
-          tag_name: ${{ github.ref }}
+          generateReleaseNotes: true
+          name: ${{ steps.version.outputs.version }}
+          tag: ${{ github.ref }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Install the project dependencies
