@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import os
 import logging
 import re
@@ -44,11 +45,13 @@ def get_latest_release(github: Github, repo: str) -> GitRelease:
     return github.get_repo(repo).get_latest_release()
 
 
-def read_config() -> dict:
-    xdg_config_home = os.path.expanduser(os.environ.get("XDG_CONFIG_HOME", "~/.config"))
-    config_dir = os.path.join(xdg_config_home, "gh-rpm")
-    os.makedirs(config_dir, exist_ok=True)
-    config_path = os.path.join(config_dir, "config.yml")
+def read_config(config_path: Optional[str] = None) -> dict:
+    if not config_path:
+        xdg_config_home = os.path.expanduser(os.environ.get("XDG_CONFIG_HOME", "~/.config"))
+        config_dir = os.path.join(xdg_config_home, "gh-rpm")
+        os.makedirs(config_dir, exist_ok=True)
+        config_path = os.path.join(config_dir, "config.yml")
+
     if not os.path.exists(config_path):
         with open(config_path, "w") as f:
             yaml.dump({"repositories": []}, f)
@@ -87,8 +90,7 @@ def install_packages(install_cmd: List[str], packages_to_install: List[str]):
             raise Exception("Error while installing packages", e)
 
 
-def main():
-    config = read_config()
+def update_packages(config: dict):
     repos = config["repositories"]
     install_cmd = config.get("install_cmd", ["sudo", "dnf", "install"])
     github = get_github(config)
@@ -117,6 +119,28 @@ def main():
         )
     install_packages(install_cmd, packages_to_install=packages_to_install)
 
+def list_packages(config: dict):
+    repos = config['repositories']
+    if len(repos) == 0:
+        logging.info("No repositories configured.")
+        return
+    
+    packages = [r["package"] for r in repos]
+    
+    list_cmd = config.get("list_cmd", ["dnf", "list", "--installed"])
+    subprocess.run(list_cmd + packages, check=True)
+
+actions_to_functions = {
+    "list": list_packages,
+    "update": update_packages,
+}
 
 if __name__ == "__main__":
-    main()
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("action", choices=("list","update"), default="update")
+    argparser.add_argument("-c", "--config", default=None)
+    
+    args = argparser.parse_args()
+    
+    config = read_config(args.config)
+    actions_to_functions[args.action](config)
